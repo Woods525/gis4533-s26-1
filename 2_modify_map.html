@@ -1,5 +1,5 @@
 <!-- 
-    Assignment 1: Modify a leaflet web map
+    Assignment 2: Modify a leaflet web map
     In this assignment you will start with a working web map, and then modify and add to it.
 
     Task:
@@ -15,6 +15,7 @@
     5. Add a paragraph to the paragraph describing your map and the locations you added.
     6. Modify the style of each of the elements (header, paragraph, and map) to your liking.
     - At a minimum, remove the inline style on the map div and add your own CSS to the style tag in the head of the document.
+    - Make the map more prominent on the page by increasing its size and/or changing its position.
 
     AI use: you can ask questions of AI (such as "explain what this line of code does" or "how do I create a popup in Leaflet?") 
     But try and write the code yourself. 
@@ -29,7 +30,11 @@
     <!-- Leaflet CSS stylesheet -->
     <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
     
-    <style></style>
+    <style>
+
+        /* full page leaflet map */
+        
+    </style>
 </head>
 <body>
     <!-- Header at the top of the page -->
@@ -46,11 +51,17 @@
         // Initialize the map, center it on UMD campus, and set the zoom level
         const map = L.map('map').setView([46.82, -92.08], 13);
 
-        // Add OpenStreetMap tiles
-        const tiles = L.tileLayer('https://tile.openstreetmap.org/{z}/{x}/{y}.png', {
-            maxZoom: 19,
-            attribution: '&copy; <a href="http://www.openstreetmap.org/copyright">OpenStreetMap</a>'
-        }).addTo(map);
+        // Add Esri Satellite tiles
+        const tiles = L.tileLayer('https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}', {
+            attribution: 'Tiles &copy; Esri &mdash; Source: Esri, i-cubed, USDA, USGS, AEX, GeoEye, Getmapping, Aerogrid, IGN, IGP, UPR-EGP, and the GIS User Community'
+        });
+        // add tiles to the map
+        tiles.addTo(map);
+
+        // add marker at Hartley Nature Center
+        const hartleyMarker = L.marker([46.835, -92.089]).addTo(map);
+        hartleyMarker.bindPopup("<b>Hartley Nature Center</b><br>A great place to hike and see wildlife!").openPopup();
+
 
         // Add a marker for the UMD campus
         const marker = L.marker([46.82, -92.085]).addTo(map);
