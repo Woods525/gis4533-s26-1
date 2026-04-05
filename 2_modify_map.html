@@ -4,16 +4,16 @@
 
     Task:
 
-    1. Replace the tile layer with a different one.
+    1. Replace the tile layer with a different one.                                                                                          **Done**
     hint: use the Leaflet Providers page to find one: https://leaflet-extras.github.io/leaflet-providers/preview/
     2. Add new markers to the map at three of your favorite locations around Duluth.
-    - Each marker should have a popup that includes the name of the location and a fun fact about it.
+    - Each marker should have a popup that includes the name of the location and a fun fact about it.                                        **Done**
     - At least one of the markers should have an image or video in the popup.
     - You can remove the existing marker for the UMD campus if you want.
-    3. Center the map on Duluth (change the zoom level as well if you want).
-    4. Modify the title and subtitle to reflect your name and the theme of your map.
-    5. Add a paragraph to the paragraph describing your map and the locations you added.
-    6. Modify the style of each of the elements (header, paragraph, and map) to your liking.
+    3. Center the map on Duluth (change the zoom level as well if you want).                                                                 **Done**
+    4. Modify the title and subtitle to reflect your name and the theme of your map.                                                         **Done**
+    5. Add a paragraph to the paragraph describing your map and the locations you added.                                                     **Done** .
+    6. Modify the style of each of the elements (header, paragraph, and map) to your liking.                                                 **Done**
     - At a minimum, remove the inline style on the map div and add your own CSS to the style tag in the head of the document.
 
     AI use: you can ask questions of AI (such as "explain what this line of code does" or "how do I create a popup in Leaflet?") 
@@ -21,40 +21,349 @@
 -->
 <!DOCTYPE html>
 <html lang="en">
+<!-- Assignment 1: Modify a leaflet web map -->
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Most Basic Web Map</title>
+    <title>Map of cool locations in Duluth</title>
     
     <!-- Leaflet CSS stylesheet -->
     <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
-    
-    <style></style>
+
+    <style>
+        /* Page styling */
+        html, body {
+            height: 100%;
+        }
+
+        body {
+            margin: 0;
+            font-family: Arial, sans-serif;
+            background-color: #aab996;
+            color: rgb(34, 46, 35);
+        }
+        .header-wrapper {
+                background: linear-gradient(360deg, #aab996, #525f42);
+                padding:2px 0;
+        }
+
+        .header {
+            text-align: center;
+            padding:1px 1px;
+            color: #2b3422;
+            font-size: 24px;
+        }
+
+        .desciption,
+        .description {
+            display: block;
+            text-align: center;
+            width: 90%;
+            max-width: 1400px;
+            margin: 10px auto 0;
+            padding: 0 10px;
+            font-size: 18px;
+            box-sizing: border-box;
+        }
+
+        #map {
+            width: 90%;
+            max-width: 1400px;
+            height: 580px;
+            margin: 19px auto;
+            border: 2px solid #40604dbf;
+            border-radius: 8px;
+        }
+        .legend.leaflet-control {
+            width: 240px;
+            background-color: rgba(50, 66, 50, 0.3);
+            color:white;
+            padding: 14px 16px;
+            border-radius: 10px;
+            border: 2px solid rgba(185, 223, 183, 0.6);
+            font-size: 15px;
+            line-height: 1.5;
+            box-shadow: 0 6px 18px rgba(0, 0, 0, 0.25);
+            margin: 0 12px 12px 0;
+        }
+
+        .legend h4 {
+            margin-top: 0;
+            margin-bottom: 10px;
+            text-align: center;
+        }
+
+        .legend p {
+            margin: 6px 0;
+        }
+
+        .rank-box {
+            display: inline-block;
+            width: 14px;
+            height: 14px;
+            margin-right: 8px;
+            border-radius: 3px;
+            vertical-align: middle;
+        }
+        /* Rank 1: Cloud 9, Rank 2: Brighton Beach, Rank 3: Fitger's Brewhouse, Rank 4: Rogue Robot Games & Comics, Rank 5: OMC Smokehouse, Rank 6: University of Minnesota Duluth */
+        .rank1 {
+            background-color: #e8f5e9;
+        }
+
+        .rank2 {
+            background-color: #c8e6c9;
+        }
+
+        .rank3 {
+            background-color: #a5d6a7;
+        }
+
+        .rank4 {
+            background-color: #66bb6a;
+        }
+
+        .rank5 {
+            background-color: #388e3c;
+        }
+
+        .rank6 {
+            background-color: #1b5e20;
+        }
+
+        .rank-marker {
+            width: 18px;
+            height: 18px;
+            border-radius: 50%;
+            border: 2px solid #ffffff;
+            box-shadow: 0 2px 6px rgba(0, 0, 0, 0.35);
+        }
+
+        .rank-marker.rank1 {
+            background-color: #e8f5e9;
+        }
+
+        .rank-marker.rank2 {
+            background-color: #c8e6c9;
+        }
+
+        .rank-marker.rank3 {
+            background-color: #a5d6a7;
+        }
+
+        .rank-marker.rank4 {
+            background-color: #66bb6a;
+        }
+
+        .rank-marker.rank5 {
+            background-color: #388e3c;
+        }
+
+        .rank-marker.rank6 {
+            background-color: #1b5e20;
+        }
+
+        .popup-rank1 .leaflet-popup-content-wrapper,
+        .popup-rank1 .leaflet-popup-tip {
+            background: #e8f5e9;
+            color: #1b3a1b;
+        }
+
+        .popup-rank2 .leaflet-popup-content-wrapper,
+        .popup-rank2 .leaflet-popup-tip {
+            background: #c8e6c9;
+            color: #1b3a1b;
+        }
+
+        .popup-rank3 .leaflet-popup-content-wrapper,
+        .popup-rank3 .leaflet-popup-tip {
+            background: #a5d6a7;
+            color: #1b3a1b;
+        }
+
+        .popup-rank4 .leaflet-popup-content-wrapper,
+        .popup-rank4 .leaflet-popup-tip {
+            background: #66bb6a;
+            color: #ffffff;
+        }
+
+        .popup-rank5 .leaflet-popup-content-wrapper,
+        .popup-rank5 .leaflet-popup-tip {
+            background: #388e3c;
+            color: #ffffff;
+        }
+
+        .popup-rank6 .leaflet-popup-content-wrapper,
+        .popup-rank6 .leaflet-popup-tip {
+            background: #1b5e20;
+            color: #ffffff;
+        }
+
+        .leaflet-popup-content {
+            margin: 8px 10px;
+            min-width: 260px;
+        }
+
+        .popup-photo,
+        .popup-video {
+            display: block;
+            margin: 6px auto 0;
+        }
+
+        .popup-photo {
+            width: 100%;
+            max-width: 300px;
+            height: auto;
+            border-radius: 6px;
+            border: 1px solid rgba(255, 255, 255, 0.45);
+        }
+
+        .popup-video {
+            width: 100%;
+            max-width: 300px;
+            height: 170px;
+            border: 0;
+            border-radius: 8px;
+        }
+
+    </style>
 </head>
 <body>
     <!-- Header at the top of the page -->
-    <div class="header">
-        <h1>A Mostly Basic Web Map</h1>
-        <h3>by: Your Name Here</h3>
+    <div class="header-wrapper">
+        <div class="header">
+            <h1>Exploring Duluth: My Favorite Locations</h1>
+        <h3>by: Marissa Woods</h3>
     </div>
-    <div id="map" style="width: 600px; height: 400px;"></div>
+    </div>
+    
+<!--Add a paragraph here task number 5-->
+<p class="description">
+    This map shows some of my favorite places in Duluth, MN. I picked locations that I like going to, including places to eat, relax, and hang out. Each marker has a short fun fact, and the locations are ranked based on my personal favorites. Some of the popups also include images or videos to make the map a little more interactive.
+</p>
+
+<!--Make sure to style the map and webpage don't make it boring. We can change color, font, size of map, background etc...-->
+
+<div id="map"></div>
     
     <!-- Leaflet JavaScript library -->
     <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
-    
+
+    <!--Make sure to include "L.circleMarker([31.262218, 34.801472 - 0.001], {radius: 50, color: "black", fillColor: "red"}).addTo(map);"-->
     <script>
         // Initialize the map, center it on UMD campus, and set the zoom level
-        const map = L.map('map').setView([46.82, -92.08], 13);
+         const map = L.map('map').setView([46.7867, -92.1005], 12);
+
+        const legend = L.control({ position: 'bottomright' });
+
+        legend.onAdd = function () {
+            const div = L.DomUtil.create('div', 'legend leaflet-control');
+// HTML content for the legend showing ranking of locations
+            div.innerHTML = `
+                <h4>Popup Ranking</h4>
+                <p><span class="rank-box rank1"></span>1. Cloud 9</p>
+                <p><span class="rank-box rank2"></span>2. Brighton Beach</p>
+                <p><span class="rank-box rank3"></span>3. Fitger's Brewhouse</p>
+                <p><span class="rank-box rank4"></span>4. Rogue Robot Games & Comics</p>
+                <p><span class="rank-box rank5"></span>5. OMC Smokehouse</p>
+                <p><span class="rank-box rank6"></span>6. University of Minnesota Duluth</p>
+            `;
+            return div;
+        };
+
+        legend.addTo(map);
 
         // Add OpenStreetMap tiles
-        const tiles = L.tileLayer('https://tile.openstreetmap.org/{z}/{x}/{y}.png', {
-            maxZoom: 19,
-            attribution: '&copy; <a href="http://www.openstreetmap.org/copyright">OpenStreetMap</a>'
+        const tiles = L.tileLayer('https://{s}.tile.openstreetmap.fr/hot/{z}/{x}/{y}.png', {
+            minZoom: 0,
+            maxZoom: 20,
+            attribution: '&copy; Stadia Maps & OpenMapTiles & OpenStreetMap'
         }).addTo(map);
+        function createRankMarker(latLng, rankClass) {
+            return L.marker(latLng, {
+                icon: L.divIcon({
+                    className: '',
+                    html: `<div class="rank-marker ${rankClass}"></div>`,
+                    iconSize: [22, 22],
+                    iconAnchor: [11, 11],
+                    popupAnchor: [0, -11]
+                })
+            }).addTo(map);
+        }
 
-        // Add a marker for the UMD campus
-        const marker = L.marker([46.82, -92.085]).addTo(map);
-        marker.bindPopup("<b>University of Minnesota Duluth</b><br>A great place to learn about GIS!").openPopup();
+        function bindPopup(markerInstance, content, className) {
+            markerInstance.bindPopup(content, { className }).openPopup();
+        }
+
+        const marker = createRankMarker([46.82, -92.085], 'rank6'); // University of Minnesota Duluth
+        const marker2 = createRankMarker([46.7839, -92.0960], 'rank1'); // Cloud 9
+        const marker3 = createRankMarker([46.8389, -92.00017], 'rank2'); // Brighton Beach
+        const marker4 = createRankMarker([46.7858, -92.1062], 'rank3'); // Fitger's Brewhouse
+        const marker5 = createRankMarker([46.7828, -92.1029], 'rank4'); // Rogue Robot Games & Comics
+        const marker6 = createRankMarker([46.7684, -92.1224], 'rank5'); // OMC Smokehouse
+
+    // Add popups to each marker with a title, fun fact, and media (image or video)
+        bindPopup(marker, `
+            <b>6. University of Minnesota Duluth</b><br>
+            Fun Fact: A great place to learn about GIS!<br>
+            <iframe
+                class="popup-video"
+                src="https://www.youtube.com/embed/EcpZ6siGLaE?rel=0"
+                title="UMD campus video"
+                loading="lazy"
+                allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
+                referrerpolicy="strict-origin-when-cross-origin"
+                allowfullscreen>
+            </iframe>`, 'popup-rank6');
+
+        bindPopup(marker2, `
+            <b>1. Cloud 9</b><br>
+            Fun Fact: One of my favorite places in Duluth for sushi, with an all-you-can-eat menu for a set price.<br>
+            <img
+                class="popup-photo"
+                src="https://lh5.googleusercontent.com/p/AF1QipN0UTB_zzfDxX2sq6LBK5ZeL-KKqggCAPktyl9z=s1024"
+                alt="Cloud 9 restaurant in Duluth"
+            >`, 'popup-rank1');
+
+        bindPopup(marker3, `
+            <b>2. Brighton Beach</b><br>
+            Fun Fact: A great place to walk along Lake Superior. It also has a fantastic collection of agates to find!<br>
+            <img
+                class="popup-photo"
+                src="https://cdn.forumcomm.com/dims4/default/bcf0708/2147483647/strip/true/crop/8192x5461+0+3/resize/2880x1920!/quality/90/?url=https:%2F%2Fforum-communications-production-web.s3.us-west-2.amazonaws.com%2Fbrightspot%2F82%2F30%2Fc6c6d31146dcb6dc5691dc7d11ae%2Fbrightonbeach-c02.jpg"
+                alt="Lake Superior shoreline at Brighton Beach"
+            >`, 'popup-rank2');
+
+        bindPopup(marker4, `
+            <b>3. Fitger's Brewhouse</b><br>
+            Fun Fact: A great place to drink and socialize!<br>
+            <img
+                class="popup-photo"
+                src="https://tse3.mm.bing.net/th/id/OIP.6tRmu2J65TnHDWInEFu0GgHaEK?rs=1&pid=ImgDetMain&o=7&rm=3"
+                alt="Fitgers complex in Duluth"
+            >`, 'popup-rank3');
+
+        bindPopup(marker5, `
+            <b>4. Rogue Robot Games & Comics</b><br>
+            Fun Fact: A fun place to buy games and comics!<br>
+            <img
+                class="popup-photo"
+                src="https://th.bing.com/th/id/R.c2b34c1915d7a0934a45816faa4081b7?rik=Vo7n%2BhZTFQ1NeQ&pid=ImgRaw&r=0"
+                alt="Rogue Robot Games and Comics storefront in Duluth"
+            >`, 'popup-rank4');
+
+        bindPopup(marker6, `
+            <b>5. OMC Smokehouse</b><br>
+            Fun Fact: One of my favorite places to eat in Duluth, often ranked as one of the top BBQ spots in Minnesota.<br>
+            <iframe
+                class="popup-video"
+                src="https://www.youtube.com/embed/EtUZW2O_fsY?rel=0"
+                title="OMC Smokehouse video"
+                loading="lazy"
+                allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
+                referrerpolicy="strict-origin-when-cross-origin"
+                allowfullscreen>
+            </iframe>`, 'popup-rank5');
+
     </script>
 </body>
 </html>
