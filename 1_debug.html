@@ -34,17 +34,27 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>A Broken Web Map</title>
-    
+    <!--//Error#1
+        // Problem: The problem was the leafet wasn't loading abd I got the error "L is not defined" 
+        // Tool: The main tool was using the concole tab in developer tools to diagnose the issue (a.k. error messages)
+        // Fix: I moved the leafet script above "my" code so it should load before using L.mps().-->
     <!-- Leaflet CSS stylesheet -->
     <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
     
     <!-- start of our CSS styles -->
+    <!--//Error#2
+       // Problem: The main problem was the color text was set to white.
+       //Tool: I used inspect the text and see the CSS color.
+       //Fix: I changed the white attribute to "black"-->
+    <!--Error#3
+       //Problem: There were additional "text" within the scipt "map".
+       //Tool: Within the elements tab deleted it.
+       //Fix: 'I' removed it from the 'line'. -->
     <style>
         h1 {
-            color: white;
+            color: black;
         }
-        .map {
-            border: 4px solid red;
+       #map {border: 4px solid red;
         }
     </style>
 </head>
@@ -55,22 +65,35 @@
     </div>
     
     <div id="map" style="width: 600px; height: 400px;"></div>
-    
+      <!-- Leaflet JavaScript library -->
+    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
     <!-- start of our JavaScript code -->
     <script>
+<!--Error#4
+    // Problem: L.map was trying to use 'mapElement', but that ID did not exist in the code.
+    // Tool: I used the Console tab and checked the Elements tab to confirm the map div ID.
+    // Fix: I updated L.map() to use the correct ID.
+    -->
         // Initialize the map
-        let map = L.map('mapElement')
+        let map = L.map('map')
         // Center the map on UMD campus, and set the zoom level
-        map.setView([-92.08, 46.82], 15);
+<!--Error#5
+    //Problem: The coordinates were backwards and unreadable to the map.
+    //Tool: 
+    //Fix: I changed the coordinates around.
+    -->     
+        map.setView([46.82, -92.08], 15);
         
         // Add OpenStreetMap tiles
-        const tiles = L.tileLayer('https://tile.openstreetmap.orgg/{z}/{x}/{y}.png', {
+<!--Error#6
+    //Problem: There was a type found in "openstreetmap.orgg", preventing the tiles to load.
+    //Tool: Console
+    //Fix: Changed the link to "openstreetmap.org" by removing a "g".
+    -->
+        const tiles = L.tileLayer('https://tile.openstreetmap.org/{z}/{x}/{y}.png', {
             maxZoom: 19,
             attribution: '&copy; <a href="http://www.openstreetmap.org/copyright">OpenStreetMap</a>'
         }).addTo(map);
     </script>
-        
-    <!-- Leaflet JavaScript library -->
-    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
 </body>
 </html>
