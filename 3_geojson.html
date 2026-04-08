@@ -8,7 +8,7 @@
 
     1. Download and simplify School Attendance Area Boundaries
 
-    I downloaded this data from the MnGeoCommons. The source for the data is the Minnesota Department of Education. 
+    I downloaded this data from the MnGeoCommons. The source for the data is the Minnesota Department of Education.      **DONE**
     The data has been filtered to the Duluth Public School District and re-projected to WGS 84 (EPSG:4326) 
     to make it compatible with our Leaflet map.
     In this step you will use Mapshaper to convert (and optimally simplify) the shapefile to GeoJSON format.
@@ -20,59 +20,215 @@
             - Further simplify the data by specifying a coordinate precision in the export command line options
                  by typing in precision=0.001
 
-    2. Add GeoJSON of Attendance Areas to the map
+    2. Add GeoJSON of Attendance Areas to the map                                                                         **DONE**
     Make sure to credit the source of the data by adding an attribution for it to the map.
         - Leaflet GeoJSON tutorial: https://leafletjs.com/examples/geojson/
         - GeoJSON reference: https://geojson.org/
 
-    3. Update GeoJSON Styling
+    3. Update GeoJSON Styling                                                                                             **DONE**                                                                                                                                  
     Create a style function to customize the styling for your Attendance Areas.
         - To help distinguish the areas from one another consider using a random color generator. 
             - Lots of options are listed here: https://stackoverflow.com/questions/1484506/random-color-generator
 
-    4. Add Popups to GeoJSON
+    4. Add Popups to GeoJSON                                                                                              **DONE**
     Add functionality so that when the user clicks on an attendance area, the schools for that area are listed in the popup.
 
-    5. Add a Layout
+    5. Add a Layout                                                                                                       **DONE**    
     - Add some HTML and CSS to your web page to complement your map. 
     - At a minimum, this should include a title and subtitle for your map, but feel free to get creative and add some style!
     
-    6. Finishing Up
-        - In case it wasn't already obvious, you've created a thematic map. 
+    6. Finishing Up                                                                                                       **DONE**
+        - In case it wasn't already obvious, you've created a thematic map.         
             That means you might need to update your basemap to something more plain and subdued (think figure-ground).
         - Also modify the map extent (so you can see all but the large northern attendance areas).
         - Make sure the code is organized and well commented so that someone else can understand what you did and how you did it.
 
     AI use: you can use AI as much as you like, but make sure to understand and verify the code it generates.
     I expect every block of code to have a comment above it describing what it does and how it works. 
--->
+        
+    --------popups leaflet map code starts here----------
+    //4. popups to geojson 
+    //add funcationally so that when the user clicks on an attendance area, the schools for that area are listed in the popup.
+
+    //geojson popup function
+    function attendanceAreaPopup
+    oneachfeature
+    
+    -->
 <!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Most Basic Web Map</title>
-    
+    <title>Duluth School Attendance Areas</title>
     <!-- Leaflet CSS -->
     <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
-    
-    <style></style>
+    <style>
+         #map {
+            width: 90%;
+            max-width: 2800px;
+            height: 750px;
+            margin: 19px auto;
+            border: 2px solid #40604dbf;
+            border-radius: 8px;}
+            h1{
+                text-align: center;
+                font-family: 'Arial', sans-serif;
+                color: #333;
+                margin-top: 20px;
+            }
+            h3{
+                text-align: center; 
+                margin-bottom:10px;
+                color: 'black';
+            }
+            h5{
+                text-align: center;
+                margin-top: 5px;
+                margin-bottom: 14px;
+                line-height: 1.4;
+            }
+            .banner h5 {
+                text-align: center; 
+                margin-bottom:6px;
+                color: 'black';
+            }
+            body {
+    margin: 0;
+    font-family: Arial, sans-serif;
+    background-color: #333;
+    color: white;
+}
+.banner {
+    background-image: url("https://cdn.forumcomm.com/dims4/default/09ce1b2/2147483647/strip/true/crop/500x250+0+0/resize/2132x1066!/quality/90/?url=https:%2F%2Ffcc-cue-exports-brightspot.s3.us-west-2.amazonaws.com%2Fduluthnewstribune%2Fbinary%2Fcopy%2F67%2Fef%2F8d0f3424b23359d0de1b8b25277d%2F538434-wizcent1115c2-500px-binary-1487181.jpg");
+    background-size: cover;
+    background-position: center;
+    height: 180px;
+    position: relative;
+}
+.banner-overlay {
+    background-color: rgba(0, 0, 0, 0.45);
+    width: 100%;
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    text-align: center;
+}
+.banner h1 {
+    margin: 0;
+    font-size: clamp(2rem, 4.6vw, 3.1rem);
+    line-height: 1.1;
+    letter-spacing: 0.01em;
+    color: white;
+}
+.banner h3 {
+    margin: 8px 0 2px;
+    font-size: clamp(1rem, 2.1vw, 1.3rem);
+    font-weight: normal;
+    color: white;
+}
+.banner h5 {
+    margin: 8px 0 0;
+    max-width: 880px;
+    padding: 0 16px;
+    font-size: clamp(0.86rem, 1.55vw, 1.02rem);
+    line-height: 1.45;
+    font-weight: normal;
+    color: #f0f0f0;
+}
+.content {
+    padding: 20px 0 30px 0;
+}
+#map {
+    width: 92%;
+    max-width: 1300px;
+    height: 490px;
+    margin: 0 auto;
+    border: 2px solid #333;
+    border-radius: 8px;
+    fill-opacity:0.7;
+}
+    </style>
 </head>
 <body>
-    <div id="map" style="width: 600px; height: 400px;"></div>
-    
+    <div class="banner">
+        <div class="banner-overlay">
+            <h1>Duluth School Attendance Areas</h1>
+            <h3>by: Marissa Woods</h3>
+            <h5>School attendance area boundaries for Duluth, MN. Each polygon represents a service area for public schools. Data source: Minnesota Department of Education</h5>
+        </div>
+    </div>
+    <div class="content">
+        <div id="map"></div>
+    </div>
     <!-- Leaflet JavaScript -->
     <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
-    
     <script>
-        // Initialize the map, center it on UMD campus, and set the zoom level
-        const map = L.map('map').setView([46.82, -92.08], 13);
-
-        // Add OpenStreetMap tiles
-        const tiles = L.tileLayer('https://tile.openstreetmap.org/{z}/{x}/{y}.png', {
+// This creates the map and centers it on Duluth.
+// The numbers are latitude, longitude, and zoom level.
+// This controls what the map looks like when it first loads.
+        const map = L.map('map').setView([46.82, -92.08], 9.5);
+// This adds the basemap (background map).
+// It shows roads, water, and general location so the data makes sense.
+// The tiles load automatically as you move around the map.
+        const tiles = L.tileLayer('https://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}{r}.png', {
             maxZoom: 19,
-            attribution: '&copy; <a href="http://www.openstreetmap.org/copyright">OpenStreetMap</a>'
+            attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> | School Attendance Data: Minnesota Department of Education (via MNGeoCommons)'
         }).addTo(map);
+// This loads the GeoJSON file with the attendance areas.
+// fetch() grabs the file, then we turn it into JSON so Leaflet can use it.
+        fetch('duluth_attendance_areas.json')
+            .then(function(response) {
+                return response.json();
+            })
+            .then(function(data) {
+                L.geoJSON(data, {
+                    style: attendanceAreaStyle,
+                    onEachFeature: attendanceAreaPopup
+                }).addTo(map);
+            });
+// This runs for each attendance area.
+// It grabs the school info and shows it when you click on the area.
+            function attendanceAreaPopup(feature, layer) {
+                const areaName = feature.properties.ELEM_NAME || 'Unknown area';
+                const middleSchool = feature.properties.MIDD_NAME || 'Unknown';
+                const highSchool = feature.properties.HIGH_NAME || 'Unknown';
+// This builds the popup text using the data from the GeoJSON.
+                layer.bindPopup(
+                    `<strong>Attendance Area:</strong> ${areaName}<br>` +
+                    `<strong>Middle School:</strong> ${middleSchool}<br>` +
+                    `<strong>High School:</strong> ${highSchool}`
+                );
+            }
+// This picks a color from a small set of nicer colors.
+// This helps avoid super bright/random colors that look messy.
+            function getRandomColor() {
+                const colors = [
+                    '#7DA7D9',
+                    '#A3C9A8',
+                    '#F2C57C',
+                    '#D9A5B3',
+                    '#B5A9D6',
+                    '#8FB9A8'
+                ];
+                return colors[Math.floor(Math.random() * colors.length)];
+            }
+// This controls how each attendance area looks on the map.
+// Leaflet runs this for every feature in the dataset.
+            function attendanceAreaStyle(feature) {
+                return {
+                    fillColor: getRandomColor(),
+                    weight: 2,
+                    opacity: 1,
+                    color: 'black',
+                    dashArray: '2',
+                    fillOpacity: 0.7
+                };
+                console.log(feature.properties);
+            }
     </script>
 </body>
 </html>
+
