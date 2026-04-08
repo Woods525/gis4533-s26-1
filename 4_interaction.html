@@ -51,3 +51,50 @@
 -->
 
 <!-- Paste your code from assignment 3 here -->
+<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+<script>
+// Create the map and center it on Duluth.
+const map = L.map('map').setView([46.82, -92.08], 9.5);
+
+// Add a light basemap so the school markers and attendance areas stand out.
+L.tileLayer('https://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}{r}.png', {
+    maxZoom: 19,
+    attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> | School Attendance Data: Minnesota Department of Education (via MNGeoCommons)'
+}).addTo(map);
+
+// Load the school CSV, convert each row into a marker, and bind a popup.
+fetch('duluth_schools.csv')
+    .then(function(response) {
+        return response.text();
+    })
+    .then(function(csvText) {
+        const rows = csvText.trim().split(/\r?\n/);
+        const headers = rows.shift().split(',');
+
+        rows.forEach(function(row) {
+            const values = row.match(/("[^"]*"|[^,]+)/g);
+            if (!values) {
+                return;
+            }
+
+            const record = {};
+            headers.forEach(function(header, index) {
+                record[header] = (values[index] || '').replace(/^"|"$/g, '');
+            });
+
+            const latitude = parseFloat(record.Lat);
+            const longitude = parseFloat(record.Lng);
+
+            if (Number.isNaN(latitude) || Number.isNaN(longitude)) {
+                return;
+            }
+
+            const marker = L.marker([latitude, longitude]).addTo(map);
+            marker.bindPopup(
+                '<strong>' + (record.MDENAME || 'Unknown School') + '</strong><br>' +
+                (record.MDEADDR || '') + '<br>' +
+                'Grade Range: ' + (record.GRADERANGE || 'Unknown')
+            );
+        });
+    });
+</script>
