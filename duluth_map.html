@@ -1,0 +1,230 @@
+<!-- 
+    Duluth Points of Interest Web Map
+
+    This web map was created to showcase attractions in Duluth, Minnesota
+    for visitors attending the 2026 FDI World Dental Congress.
+
+    The data is pulled from a CSV file and displayed using Leaflet.
+    Each attraction is symbolized based on its type and includes a popup
+    with useful information and an image.
+-->
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Duluth Points of Interest</title>
+
+    <!-- Leaflet CSS gives us the base map styling -->
+    <link rel="stylesheet" href="https://unpkg.com/leaflet/dist/leaflet.css">
+
+    <style>
+        /* General page styling */
+        body {
+            margin: 0;
+            font-family: Arial, sans-serif;
+            background-color: #f4f1ea;
+        }
+
+        /* Header is kept simple so it doesn’t take over the map space */
+        header {
+            background-color: #244f63;
+            color: white;
+            padding: 10px 20px;
+            position: relative; /* lets us anchor the logo */
+            text-align: center;
+            border-bottom: 2px solid rgba(255,255,255,0.2);
+        }
+
+        /* Title stays centered regardless of logo */
+        header h1 {
+            margin: 0;
+            font-size: 26px;
+        }
+
+        /* Intro text kept readable and not too wide */
+        header p {
+            margin: 5px auto 0 auto;
+            max-width: 700px;
+            line-height: 1.5;
+        }
+
+        /* Logo is placed in the top-left without affecting layout */
+        .header-logo {
+            width: 80px;
+            position: absolute;
+            top: 10px;
+            left: 15px;
+        }
+
+        /* Main map container */
+        #map {
+            height: 80vh;
+            width: 100%;
+        }
+
+        /* Keeps popup images clean and consistent */
+        .popup-img {
+            width: 220px;
+            max-height: 140px;
+            object-fit: cover;
+            border-radius: 6px;
+        }
+
+        .popup-text {
+            max-width: 240px;
+        }
+
+        /* Legend styling so it doesn’t look default/plain */
+        .legend {
+            background: white;
+            padding: 10px;
+            line-height: 1.6;
+            border-radius: 6px;
+            box-shadow: 0 0 8px rgba(0,0,0,0.3);
+            font-size: 14px;
+        }
+
+        .legend img {
+            width: 20px;
+            vertical-align: middle;
+            margin-right: 5px;
+        }
+
+        /* Footer keeps sources clean and professional */
+        footer {
+            text-align: center;
+            padding: 10px;
+            font-size: 13px;
+            background-color: #244f63;
+            color: white;
+        }
+    </style>
+</head>
+
+<body>
+
+    <header>
+        <!-- Logo placed top-left for visual identity -->
+        <img src="https://images.seeklogo.com/logo-png/20/1/duluth-minnesota-logo-png_seeklogo-203634.png" alt="Duluth logo" class="header-logo">
+        
+        <h1>Duluth Points of Interest</h1>
+        <p>
+            Welcome to Duluth! This map highlights local attractions for visitors attending the
+            2026 FDI World Dental Congress. Click each marker to learn more about places to visit.
+        </p>
+    </header>
+
+    <div id="map"></div>
+
+    <!-- Leaflet JavaScript (must be loaded before using Leaflet functions) -->
+    <script src="https://unpkg.com/leaflet/dist/leaflet.js"></script>
+
+    <!-- PapaParse lets us read the CSV directly -->
+    <script src="https://cdn.jsdelivr.net/npm/papaparse@5.3.2/papaparse.min.js"></script>
+
+    <script>
+        // Initialize the map centered on Duluth
+        var map = L.map('map').setView([46.7867, -92.1005], 12);
+
+        // Add OpenStreetMap as the base layer
+        L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+            attribution: '&copy; OpenStreetMap contributors'
+        }).addTo(map);
+
+        // Icons are used to visually group attractions by type
+        var waterfrontIcon = L.icon({
+            iconUrl: 'https://cdn-icons-png.flaticon.com/512/854/854878.png',
+            iconSize: [32, 32]
+        });
+
+        var historicIcon = L.icon({
+            iconUrl: 'https://cdn-icons-png.flaticon.com/512/3448/3448339.png',
+            iconSize: [32, 32]
+        });
+
+        var outdoorIcon = L.icon({
+            iconUrl: 'https://cdn-icons-png.flaticon.com/512/869/869869.png',
+            iconSize: [32, 32]
+        });
+
+        var defaultIcon = L.icon({
+            iconUrl: 'https://cdn-icons-png.flaticon.com/512/684/684908.png',
+            iconSize: [32, 32]
+        });
+
+        // Load and read the CSV file
+        Papa.parse('DuluthItems/duluth_attractions.csv', {
+            download: true,
+            header: true,
+            complete: function(results) {
+
+                // Loop through each row in the CSV
+                results.data.forEach(function(row) {
+
+                    // Convert coordinates from text to numbers
+                    var lat = parseFloat(row.Latitude);
+                    var lon = parseFloat(row.Longitude);
+
+                    // Skip any broken or empty rows
+                    if (isNaN(lat) || isNaN(lon)) return;
+
+                    // Choose icon based on attraction type
+                    var selectedIcon;
+
+                    if (row.Type === "Waterfront") {
+                        selectedIcon = waterfrontIcon;
+                    } else if (row.Type === "Historic") {
+                        selectedIcon = historicIcon;
+                    } else if (row.Type === "Outdoor" || row.Type === "Recreation") {
+                        selectedIcon = outdoorIcon;
+                    } else {
+                        selectedIcon = defaultIcon;
+                    }
+
+                    // Create marker and add it to the map
+                    var marker = L.marker([lat, lon], { icon: selectedIcon }).addTo(map);
+
+                    // Attach popup with info pulled directly from CSV
+                    marker.bindPopup(`
+                        <div class="popup-text">
+                            <h3>${row.Attraction}</h3>
+                            <img class="popup-img" src="${row["Photo URL"]}">
+                            <p><strong>Type:</strong> ${row.Type}</p>
+                            <p><strong>Address:</strong> ${row.Address}</p>
+                            <p>${row.Description}</p>
+                            <p><a href="${row.Website}" target="_blank">Visit Website</a></p>
+                        </div>
+                    `);
+                });
+            }
+        });
+
+        // Add legend to explain what each icon means
+        var legend = L.control({position: 'bottomright'});
+
+        legend.onAdd = function(map) {
+            var div = L.DomUtil.create('div', 'legend');
+
+            div.innerHTML = `
+                <strong>Attraction Types</strong><br>
+                <img src="https://cdn-icons-png.flaticon.com/512/854/854878.png"> Waterfront<br>
+                <img src="https://cdn-icons-png.flaticon.com/512/3448/3448339.png"> Historic<br>
+                <img src="https://cdn-icons-png.flaticon.com/512/869/869869.png"> Outdoor/Recreation<br>
+                <img src="https://cdn-icons-png.flaticon.com/512/684/684908.png"> Other
+            `;
+
+            return div;
+        };
+
+        legend.addTo(map);
+    </script>
+
+    <footer>
+        Attraction information and images are from linked public tourism/organization websites. 
+        Map data from OpenStreetMap.
+    </footer>
+
+</body>
+</html>
